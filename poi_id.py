@@ -15,7 +15,8 @@ import numpy as np
 ### features_list is a list of strings, each of which is a feature name
 ### first feature must be "poi", as this will be singled out as the label
 features_list = ["poi","salary","total_payments","exercised_stock_options", 
- "bonus", "restricted_stock", "shared_receipt_with_poi",'total_stock_value',"to_poi_email","from_poi_email", "bonus",
+ "bonus", "restricted_stock", "shared_receipt_with_poi",'total_stock_value',
+ "to_poi_email","from_poi_email", 
 'expenses','other']
 
 ### load the dictionary containing the dataset
@@ -56,7 +57,7 @@ for i in data_dict:
 #print data_dict['ALLEN PHILLIP K']
 ### we suggest removing any outliers before proceeding further
 ###NB observing data, removing outliers
-features = [features_list[1], features_list[3],"poi"]
+features = [features_list[7], features_list[8],"poi"]
 
 ###NB removing total from data as well as a company name
 
@@ -79,13 +80,7 @@ matplotlib.pyplot.xlabel(features[0])
 matplotlib.pyplot.ylabel(features[1])
 matplotlib.pyplot.show()
 
-'''
-for name in data_dict:
-    if data_dict[name]["bonus"]>3500000 and data_dict[name]["bonus"]!="NaN":
-        print name,data_dict[name]["salary"],data_dict[name]["bonus"]
-    if data_dict[name]["salary"]>3500000 and data_dict[name]["salary"]!="NaN":
-        print name,data_dict[name]["salary"],data_dict[name]["bonus"]
-'''        
+     
 ### Lay, Skilling, Pickering, Frevert all have high salaries but seem in line with level of position
 ### recommend not removing. Bonus outliers are bigwigs as well, do not remove
         
