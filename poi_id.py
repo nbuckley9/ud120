@@ -11,6 +11,7 @@ from sklearn import preprocessing
 from sklearn.grid_search import GridSearchCV
 from time import time
 import numpy as np
+print "this is awesome"
 
 ### features_list is a list of strings, each of which is a feature name
 ### first feature must be "poi", as this will be singled out as the label
