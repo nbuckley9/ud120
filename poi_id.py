@@ -15,8 +15,8 @@ import numpy as np
 ### features_list is a list of strings, each of which is a feature name
 ### first feature must be "poi", as this will be singled out as the label
 features_list = ["poi","salary","total_payments","exercised_stock_options", 
-"restricted_stock",  'total_stock_value',"to_poi_email","from_poi_email", "bonus",
-"shared_receipt_with_poi",'expenses']
+ "bonus", "restricted_stock", "shared_receipt_with_poi",'total_stock_value',"to_poi_email","from_poi_email", "bonus",
+'expenses','other']
 
 ### load the dictionary containing the dataset
 data_dict = pickle.load(open("final_project_dataset.pkl", "r") )
@@ -25,16 +25,13 @@ data_dict = pickle.load(open("final_project_dataset.pkl", "r") )
 #print data_dict.values()
 print data_dict['LOCKHART EUGENE E']
 
-for j in data_dict:
-    key_count=0
-    count=0
-    for i in data_dict['SAVAGE FRANK'].keys():
-        key_count+=1
-        if data_dict[j][i]=="NaN":
-            count+=1
+for i in data_dict['SAVAGE FRANK'].keys():
     
-    if count>19:
-        print j, count
+    NaN_count=0
+    for j in data_dict:
+        if data_dict[j][i]=="NaN":
+            NaN_count+=1
+    print i, 146-NaN_count
      
 data_dict.pop('TOTAL',0)
 data_dict.pop('THE TRAVEL AGENCY IN THE PARK',0)
@@ -177,10 +174,10 @@ print("Fitting the classifier to the training set")
 t0 = time()
 param_grid = {'criterion': ('gini','entropy'),
               'splitter':('best','random'), 
-              'min_samples_split':[4,5,10,20],
+              'min_samples_split':[2,3,4,5,10,20],
                 'max_features':('auto','sqrt','log2',None),
                 'max_depth':[None,1,2,10,50],
-                'max_leaf_nodes':[None,8]}
+                'max_leaf_nodes':[None,2,4,8]}
 clf = grid_search.GridSearchCV(DecisionTreeClassifier(random_state=42),param_grid)
 clf = clf.fit(features_train,labels_train)
 pred= clf.predict(features_test)
