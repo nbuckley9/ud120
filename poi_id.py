@@ -126,7 +126,7 @@ def recall(pred,labels_test):
 
 my_dataset = data_dict
 
-
+print "Print this is easy mode!!"
 ### these two lines extract the features specified in features_list
 ### and extract them from data_dict, returning a numpy array
 data = featureFormat(my_dataset, features_list)
