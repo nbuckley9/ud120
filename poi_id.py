@@ -21,22 +21,16 @@ features_list = ["poi","salary","total_payments","exercised_stock_options",
 
 ### load the dictionary containing the dataset
 data_dict = pickle.load(open("final_project_dataset.pkl", "r") )
-###NB Familiarizing with data
-#print data_dict.keys()
-#print data_dict.values()
-print data_dict['LOCKHART EUGENE E']
+###NB Familiarizing with data-- based on analysis removing outliers
+### Lay, Skilling, Pickering, Frevert all have high salaries but seem in line with level of position
+### recommend not removing. Bonus outliers are bigwigs as well, do not remove
 
-for i in data_dict['SAVAGE FRANK'].keys():
-    
-    NaN_count=0
-    for j in data_dict:
-        if data_dict[j][i]=="NaN":
-            NaN_count+=1
-    print i, 146-NaN_count
-     
 data_dict.pop('TOTAL',0)
 data_dict.pop('THE TRAVEL AGENCY IN THE PARK',0)
+#LOCKHART is all NaN values, removing
 data_dict.pop('LOCKHART EUGENE E',0)
+
+#creating ratio of to/from emails to POIs
 def dict_to_list(key,normalizer):
     new_list=[]
     
@@ -50,48 +44,15 @@ def dict_to_list(key,normalizer):
 from_poi_email=dict_to_list("from_poi_to_this_person","to_messages")
 to_poi_email=dict_to_list("from_this_person_to_poi","from_messages")
 ctr=0
+
+# Attaching new features to data_dict for each data point
 for i in data_dict:
     data_dict[i]["from_poi_email"]=from_poi_email[ctr]
     data_dict[i]["to_poi_email"]=to_poi_email[ctr]
     ctr+=1
-#print data_dict['ALLEN PHILLIP K']
-### we suggest removing any outliers before proceeding further
-###NB observing data, removing outliers
-features = [features_list[7], features_list[8],"poi"]
-
-###NB removing total from data as well as a company name
 
 
-## NB looking for additional outliers--didn't find any so whiting out print
-
-data = featureFormat(data_dict, features)
-
-for i in range(0,len(data)):
-    xlab = data[i][0]
-    ylab = data[i][1]
-    if data[i][2]==0:
-        matplotlib.pyplot.scatter( xlab, ylab,100,c='b')
-        
-    else:
-        matplotlib.pyplot.scatter( xlab, ylab,100,c='r')
-
-
-matplotlib.pyplot.xlabel(features[0])
-matplotlib.pyplot.ylabel(features[1])
-matplotlib.pyplot.show()
-
-     
-### Lay, Skilling, Pickering, Frevert all have high salaries but seem in line with level of position
-### recommend not removing. Bonus outliers are bigwigs as well, do not remove
-        
-### if you are creating any new features, you might want to do that here
-### store to my_dataset for easy export below
-#new features proposed:  to_poi__email_scaled,from_poi_email_scaled,
-
-   
-
-
-
+# Defining precision and recall tests
 
 def precision(pred,labels_test):
     precision, precision_d, precision_n=0.0,0.0,0.0
@@ -138,11 +99,7 @@ labels, features = targetFeatureSplit(data)
 ### machine learning goes here!
 ### please name your classifier clf for easy export below
 
-###NB inserted from cross-validation moduls
-'''
-from sklearn import cross_validation
-features_train, features_test, labels_train, labels_test = cross_validation.train_test_split(features,labels, test_size=0.3, random_state=42)
-'''
+###Using KFold to maximize train data
 
 from sklearn.cross_validation import KFold
 kf=KFold(len(labels),3, random_state=42)
@@ -154,13 +111,14 @@ for train_indices, test_indices in kf:
     labels_test=[labels[ii] for ii in test_indices]
     
 
-#scale data
+#scale data for some of the algorithms below
 min_max_scaler=preprocessing.MinMaxScaler()
 features_train_scaled=min_max_scaler.fit_transform(features_train)
 
 min_max_scaler=preprocessing.MinMaxScaler()
 features_test_scaled=min_max_scaler.fit_transform(features_test)
 
+#Ultimately found Decision Tree as best Classifier so tuning it with param_grid
 print "Decision Tree Method"
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import  grid_search
@@ -182,9 +140,9 @@ print(clf.best_estimator_)
 
 from sklearn.metrics import accuracy_score
 acc=accuracy_score(labels_test, pred)
-print acc
-print precision(pred,labels_test)
-print recall(pred,labels_test) 
+print "The accuracy of this classifier is ", acc
+print "The precision of this classifier is ",precision(pred,labels_test)
+print "The recall  of this classifier is ",recall(pred,labels_test) 
 
 #PCA analysis on features
 from sklearn.decomposition import PCA
@@ -201,9 +159,9 @@ clf.fit(features_train_pca,labels_train)
 pred=clf.predict(features_test_pca)
 
 acc=accuracy_score(labels_test, pred)
-print acc
-print precision(pred,labels_test)
-print recall(pred,labels_test) 
+print "The accuracy of this classifier is ", acc
+print "The precision of this classifier is ",precision(pred,labels_test)
+print "The recall  of this classifier is ",recall(pred,labels_test) 
 
 
 #K means example to work on later
@@ -217,9 +175,9 @@ pred=clf.predict(features_test_pca)
 acc=accuracy_score(labels_test, pred)
 #print("Best estimator found by grid search:")
 #print(clf.best_estimator_)
-print acc    
-print precision(pred,labels_test)
-print recall(pred,labels_test)   
+print "The accuracy of this classifier is ", acc
+print "The precision of this classifier is ",precision(pred,labels_test)
+print "The recall  of this classifier is ",recall(pred,labels_test)  
 
 print "Logistic Regression Method"
 from  sklearn import linear_model
@@ -227,9 +185,9 @@ reg=linear_model.LogisticRegression()
 reg=reg.fit(features_train,labels_train)
 pred=reg.predict(features_test)
 acc=accuracy_score(labels_test, pred)
-print acc
-print precision(pred,labels_test)
-print recall(pred,labels_test) 
+print "The accuracy of this classifier is ", acc
+print "The precision of this classifier is ",precision(pred,labels_test)
+print "The recall  of this classifier is ",recall(pred,labels_test) 
 ### Testing Precision, recall
 #POIs in test set
 
